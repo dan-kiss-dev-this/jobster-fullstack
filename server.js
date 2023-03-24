@@ -1,5 +1,12 @@
 import express from 'express'
-//note with node you include the .js import
+
+import dotenv from 'dotenv';
+// look for the .env file in root
+dotenv.config()
+
+import connectDB from './db/connect.js';
+
+// middleware
 import notFoundMiddleware from './middleware/not-found.js'
 //this needs to come later
 import errorHandlerMiddleware from "./middleware/error-handler.js"
@@ -21,4 +28,17 @@ app.use(errorHandlerMiddleware)
 
 const port = process.env.PORT || 5001
 
-app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
+// app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
+
+
+// asnyc as mongoose connect is returning a promise
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGO_URL)
+        console.log(`Server is listening on port ${port}`)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+start()
