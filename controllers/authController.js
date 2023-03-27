@@ -1,5 +1,3 @@
-import { generateKeyPair } from "crypto"
-
 const register = async (req, res) => {
     res.send("register user")
 }

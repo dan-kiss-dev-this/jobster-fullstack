@@ -5,6 +5,6 @@ export const authRouter = express.Router();
 
 authRouter.route('/register').post(register)
 authRouter.route('/login').post(login)
-authRouter.route('updateUser').patch(updateUser)
+authRouter.route('/updateUser').patch(updateUser)
 
 export default authRouter

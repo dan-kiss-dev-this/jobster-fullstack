@@ -1,14 +1,14 @@
 import express from 'express'
 
 import dotenv from 'dotenv';
-// look for the .env file in root
+// look for the.env file in root
 dotenv.config()
 
-// db and authenticate user
+// db and authenticate
 import connectDB from './db/connect.js';
 
-import { authRouter } from './routes/authRoutes.js'
-import { jobsRouter } from './routes/jobsRoutes.js'
+import authRouter from './routes/authRoutes.js'
+import jobsRouter from './routes/jobsRoutes.js'
 
 // middleware
 import notFoundMiddleware from './middleware/not-found.js'
@@ -22,10 +22,14 @@ const app = express()
 //to access the json on post requests via express json middleware
 app.use(express.json())
 
+const port = process.env.PORT || 5001
+
 app.get("/", (req, res) => {
-    // throw new Error('error')
-    res.send('Welcome')
+    // throw new Error('error was thrown')
+    res.send(`Welcome to http://localhost:${port}/`)
 })
+
+app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
 
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/jobs', jobsRouter)
@@ -35,11 +39,6 @@ app.use(notFoundMiddleware)
 
 //add error handling at the end
 app.use(errorHandlerMiddleware)
-
-const port = process.env.PORT || 5001
-
-// app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
-
 
 // asnyc as mongoose connect is returning a promise
 const start = async () => {

@@ -1,4 +1,3 @@
-
 // async due to communication with the database. 
 const createJob = async (req, res) => {
     res.send('create job')
