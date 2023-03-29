@@ -7,7 +7,15 @@ const register = async (req, res, next) => {
         const user = await User.create(req.body)
         // custom mongoose jwt instance method
         const token = user.createJWT()
-        res.status(StatusCodes.OK).json({ user, token })
+        res.status(StatusCodes.OK).json({
+            user: {
+                email: user.email,
+                lastName: user.lastName,
+                location: user.location,
+                name: user.name,
+                location: user.location
+            }, token
+        })
     } catch (error) {
         // we use next instead of this code to pass the error to the next middleware res.status(500).json({ msg: "there was an error" })
         next(error)
