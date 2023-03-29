@@ -5,7 +5,9 @@ const register = async (req, res, next) => {
     // user object shows up here and is loaded to mongodb, res is given
     try {
         const user = await User.create(req.body)
-        res.status(StatusCodes.OK).json({ user })
+        // custom mongoose jwt instance method
+        const token = user.createJWT()
+        res.status(StatusCodes.OK).json({ user, token })
     } catch (error) {
         // we use next instead of this code to pass the error to the next middleware res.status(500).json({ msg: "there was an error" })
         next(error)
@@ -16,6 +18,8 @@ const login = async (req, res) => {
 }
 const updateUser = async (req, res) => {
     res.send("update user")
+    // triggered by the hook from mongoose middleware in UserSchema setup
+    User.findOneAndUpdate()
 }
 
 export { register, login, updateUser }
