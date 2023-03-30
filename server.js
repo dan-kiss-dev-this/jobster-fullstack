@@ -15,15 +15,10 @@ import notFoundMiddleware from './middleware/not-found.js'
 //this needs to come later
 import errorHandlerMiddleware from "./middleware/error-handler.js"
 
-// cors sample
-import cors from 'cors'
-
 // es5 format below
 // const express = require('express')
 const app = express()
 
-//avoid cors issue
-app.use(cors())
 
 //to access the json on post requests via express json middleware
 app.use(express.json())
@@ -33,8 +28,13 @@ const port = process.env.PORT || 5001
 app.get("/", (req, res) => {
     // throw new Error('error was thrown')
     // res.send(`Welcome to http://localhost:${port}/`)
+    res.json({ msg: `Welcome to http://localhost:${port}/` })
+})
 
-    res.json({ msg: `Welcome to http://localhost:${port}/`})
+app.get("/api/v1", (req, res) => {
+    // throw new Error('error was thrown')
+    // res.send(`Welcome to http://localhost:${port}/`)
+    res.json({ msg: `Welcome to http://localhost:${port}/` })
 })
 
 app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
