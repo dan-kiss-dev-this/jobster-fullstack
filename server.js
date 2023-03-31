@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 // look for the.env file in root
 dotenv.config()
 
+import cors from 'cors'
+
 // db and authenticate
 import connectDB from './db/connect.js';
 
@@ -19,12 +21,14 @@ import errorHandlerMiddleware from "./middleware/error-handler.js"
 // const express = require('express')
 const app = express()
 
+app.use(cors())
 
 //to access the json on post requests via express json middleware
 app.use(express.json())
 
 const port = process.env.PORT || 5001
 
+// as this '/' endpoint maps to a local file on the client side the '/api/v1' endpoint is used to get the data from the client side.
 app.get("/", (req, res) => {
     // throw new Error('error was thrown')
     // res.send(`Welcome to http://localhost:${port}/`)
