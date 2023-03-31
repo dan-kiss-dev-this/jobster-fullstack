@@ -17,9 +17,15 @@ import notFoundMiddleware from './middleware/not-found.js'
 //this needs to come later
 import errorHandlerMiddleware from "./middleware/error-handler.js"
 
+import morgan from 'morgan'
+
 // es5 format below
 // const express = require('express')
 const app = express()
+
+if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'))
+}
 
 app.use(cors())
 
