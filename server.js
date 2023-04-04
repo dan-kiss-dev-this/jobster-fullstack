@@ -27,6 +27,7 @@ if (process.env.NODE_ENV !== 'production') {
     app.use(morgan('dev'))
 }
 
+// so backend server can talk to front end without cors issue
 app.use(cors())
 
 //to access the json on post requests via express json middleware
