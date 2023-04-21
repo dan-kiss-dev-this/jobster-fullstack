@@ -21,7 +21,7 @@ export default function Register() {
     const state = useAppContext();
     console.log(20, state)
     // via state we destructure these values
-    const { user, isLoading, showAlert, displayAlert, registerUser } = state
+    const { user, isLoading, showAlert, displayAlert, registerUser, loginUser } = state
     // [e.target.name] uses brackets to set key dynamically, you use the bracket to set the key to the evaluated string of e.target.name = 'name' so key is 'name' not 'e.target.name' the bracket is how you set the key dynamically in an object
     const handleChange = (e) => setValues({ ...values, [e.target.name]: e.target.value })
 
@@ -36,6 +36,7 @@ export default function Register() {
         console.log(33, currentUser)
         if (isMember) {
             console.log('already a member')
+            loginUser(currentUser)
         } else {
             registerUser(currentUser)
         }

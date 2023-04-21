@@ -73,9 +73,13 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
+    const loginUser = async (currentUser) => {
+        console.log(52, currentUser)
+    }
+
     //props.children has been desctructured as we got the stateful container being returned below
     return (
-        <AppContext.Provider value={{ ...state, displayAlert, registerUser }}>{children}</AppContext.Provider>
+        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser }}>{children}</AppContext.Provider>
     )
 }
 
