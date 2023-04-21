@@ -61,5 +61,11 @@ UserSchema.methods.createJWT = function () {
 
 }
 
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+    console.log(6565)
+    const isMatch = await bcrypt.compare(candidatePassword, this.password)
+    return isMatch;
+}
+
 // to create the users collection in mongodb, note model has a type and schema for it
 export default mongoose.model('User', UserSchema)
