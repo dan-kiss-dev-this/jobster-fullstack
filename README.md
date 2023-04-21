@@ -5977,3 +5977,9 @@ package.json
 - git add .
 - git commit -m "first commit"
 - push up to Github
+
+use the following information in .env file
+PORT=4000
+MONGO_URL=getURLFromMongo
+JWT_SECRET=Yp3s6v9y$B&E)H@McQeThWmZq4t7w!z
+JWT_LIFETIME=1d
