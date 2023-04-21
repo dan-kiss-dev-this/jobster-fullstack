@@ -27,23 +27,32 @@ const login = async (req, res) => {
     if (!email || !password) {
         throw new BadRequestError('Please provide all values')
     }
+
     // adjust this to include the password for comparison, compare salted password
     const user = await User.findOne({ email }).select('+password')
+
     if (!user) {
-        throw new UnAuthenticatedError('Invalid Credentials')
+        // using return to stop any additional code execution
+        return res.status(400).json({ message: 'Invalid Credentials email' })
+        // line below here is not working as it makes node fail due to throwing a nested error, to do research more
+        // throw new UnAuthenticatedError('Invalid Credentials')
     }
-    console.log(34, user)
     const isPasswordCorrect = await user.comparePassword(password)
     if (!isPasswordCorrect) {
-        throw new UnAuthenticatedError('Invalid Credentials')
+        return res.status(400).json({ message: 'Invalid Credentials password' })
+        // line below here is not working as it makes node fail due to throwing a nested error, to do research more
+        // throw new UnAuthenticatedError('Invalid Credentials login')
     }
+    console.log(4545)
     const token = user.createJWT()
     // to not expose the password
     user.password = undefined
     res.status(StatusCodes.OK).json({ user, token, location: user.location })
     //old confirmation
     // res.send("login user")
+
 }
+
 const updateUser = async (req, res) => {
     res.send("update user")
     // triggered by the hook from mongoose middleware in UserSchema setup

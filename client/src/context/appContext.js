@@ -1,5 +1,5 @@
 import React, { useReducer, useContext } from 'react';
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR } from './actions';
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR } from './actions';
 import Reducer from './reducer'
 import axios from 'axios'
 
@@ -74,7 +74,26 @@ const AppProvider = ({ children }) => {
     }
 
     const loginUser = async (currentUser) => {
-        console.log(52, currentUser)
+        dispatch({ type: LOGIN_USER_BEGIN });
+        console.log(3838, currentUser)
+
+        try {
+            // see how routing is set on server side to get this url
+            const response = await axios.post('http://localhost:4000/api/v1/auth/login', currentUser)
+            console.log(4040, response)
+            // const { data } = response;
+            const { user, token } = response.data
+            const { location } = user
+
+            dispatch({ type: LOGIN_USER_SUCCESS, payload: { user, token } })
+            // local storage later
+            addUserToLocalStorage({ user, token, location })
+        } catch (error) {
+            console.log(45, error, error.response)
+            // error.response.data.msg
+            dispatch({ type: LOGIN_USER_ERROR, payload: { msg: 'Invalid Login, ' + error.message } })
+        }
+        clearAlert()
     }
 
     //props.children has been desctructured as we got the stateful container being returned below
