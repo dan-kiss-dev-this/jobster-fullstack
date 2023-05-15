@@ -1,5 +1,5 @@
 import React, { useReducer, useContext } from 'react';
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR } from './actions';
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR } from './actions';
 import Reducer from './reducer'
 import axios from 'axios'
 
@@ -20,7 +20,8 @@ const initialState = {
     user: user ? JSON.parse(user) : null,
     token: token ? token : null,
     userLocation: userLocation ? userLocation : '',
-    jobLocation: userLocation ? userLocation : ''
+    jobLocation: userLocation ? userLocation : '',
+    showSidebar: false
 }
 
 const AppContext = React.createContext()
@@ -96,9 +97,11 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
+    const toggleSidebar = () => dispatch({ type: "TOGGLE_SIDEBAR" })
+
     //props.children has been desctructured as we got the stateful container being returned below
     return (
-        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser }}>{children}</AppContext.Provider>
+        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar }}>{children}</AppContext.Provider>
     )
 }
 
