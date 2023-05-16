@@ -16,6 +16,7 @@ import jobsRouter from './routes/jobsRoutes.js'
 import notFoundMiddleware from './middleware/not-found.js'
 //this needs to come later
 import errorHandlerMiddleware from "./middleware/error-handler.js"
+import authenticateUser from './middleware/auth.js'
 
 import morgan from 'morgan'
 
@@ -50,8 +51,10 @@ app.get("/api/v1", (req, res) => {
 
 app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
 
+// authRouter is hit after accessing this api endpoint
+// note we also authenticate the user if they are changing information in their profile, to login we don't authenticate as the user is checked for existence or a new account is made before authentication can occur
 app.use('/api/v1/auth', authRouter)
-app.use('/api/v1/jobs', jobsRouter)
+app.use('/api/v1/jobs', authenticateUser, jobsRouter)
 
 //app.use says use the routes that exist and if non are found it will use the app.use() middleware
 app.use(notFoundMiddleware)
