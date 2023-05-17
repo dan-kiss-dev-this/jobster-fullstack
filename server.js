@@ -6,6 +6,9 @@ dotenv.config()
 
 import cors from 'cors'
 
+// handle async error when you throw the error
+import 'express-async-errors'
+
 // db and authenticate
 import connectDB from './db/connect.js';
 
