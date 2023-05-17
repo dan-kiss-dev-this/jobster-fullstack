@@ -4,7 +4,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     console.log(44, err)
     const defaultError = {
         //500
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        statusCode: err?.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
         msg: err.message || "Something went wrong try again later",
         fullError: err
     }
