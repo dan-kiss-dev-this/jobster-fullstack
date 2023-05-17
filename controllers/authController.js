@@ -54,9 +54,31 @@ const login = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
-    res.send("update user")
+    const { email, name, lastName, location } = req.body
+    if (!email || !name || !lastName || !location) {
+        throw new BadRequestError('Please provide all values')
+    }
+
+    // note findOne does not return a password
+    const user = await User.findOne({ _id: req.user.userId })
+
+    user.email = email
+    user.name = name
+    user.lastName = lastName
+    user.location = location
+
+    // item to keep in mind is do not hash an already hashed password as they wont match
+    await user.save()
+
+    // make a new token
+    const token = user.createJWT()
+    res.status(StatusCodes.OK).json({
+        user,
+        token,
+        location: user.location
+    })
     // triggered by the hook from mongoose middleware in UserSchema setup
-    User.findOneAndUpdate()
+    //User.findOneAndUpdate()
 }
 
 export { register, login, updateUser }

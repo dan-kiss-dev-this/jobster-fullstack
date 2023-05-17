@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'please provide password'],
         minlength: 6,
-        // to avoid sharing password
+        // to avoid returning password
         select: false,
     },
     lastName: {
@@ -47,9 +47,18 @@ const UserSchema = new mongoose.Schema({
 });
 
 //triggered in 2 instances in auth controller when user is created and also the update user, note use function keyword here per mongoose, you may need to invoke next() parameter if code is getting stuck here
+// findOneAndUpdate would not trigger this hook
 UserSchema.pre('save', async function () {
-    // running the jashing of password
+    // running the hashing of password, on first save
     // console.log(this.password)
+
+    if (!this.isModified('password')) {
+        // we do this so the user can modify non password values
+        // console.log(55, this.modifiedPaths())
+        //console.log(56, this.isModified('name'))
+        return
+    }
+
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
 })
