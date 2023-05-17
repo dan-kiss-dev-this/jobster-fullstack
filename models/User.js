@@ -57,6 +57,7 @@ UserSchema.pre('save', async function () {
 UserSchema.methods.createJWT = function () {
     // this is the document
     console.log(57, this)
+    // sample to have token expire in 100ms below use: expiresIn: '100'
     return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME })
 
 }
