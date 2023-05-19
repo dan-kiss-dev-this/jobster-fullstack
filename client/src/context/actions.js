@@ -12,3 +12,5 @@ export const LOGIN_USER_ERROR = "LOGIN_USER_ERROR"
 export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR"
 
 export const LOGOUT_USER = "LOGOUT_USER"
+
+export const UPDATE_USER = "UPDATE_USER"

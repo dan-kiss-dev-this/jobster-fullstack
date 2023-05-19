@@ -1,5 +1,5 @@
 import React, { useReducer, useContext } from 'react';
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER } from './actions';
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER } from './actions';
 import Reducer from './reducer'
 import axios from 'axios'
 
@@ -104,9 +104,24 @@ const AppProvider = ({ children }) => {
         removeUserFromLocalStorage()
     }
 
+    const updateUser = async (currentUser) => {
+        console.log(108, currentUser)
+        // change user object to currentUser
+        const { email, name, lastName, location } = currentUser
+        if (!email || !name || !lastName || !location) {
+            dispatch({ type: DISPLAY_ALERT })
+            clearAlert()
+            return
+        }
+        console.log(117)
+        // const fullNewUser = { ...JSON.parse(user), email, name, lastName, location }
+        // localStorage.setItem('user', JSON.stringify(fullNewUser))
+        // dispatch({ type: UPDATE_USER, payload: fullNewUser })
+    }
+
     //props.children has been desctructured as we got the stateful container being returned below
     return (
-        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser }}>{children}</AppContext.Provider>
+        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser }}>{children}</AppContext.Provider>
     )
 }
 
