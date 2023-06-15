@@ -28,6 +28,18 @@ const AppContext = React.createContext()
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
 
+    // axios custom instance
+    const authFetch = axios.create({
+        baseURL: '/api/v1/',
+        headers: {
+            Authorization: `Bearer ${state.token}`
+        }
+    })
+
+    // set the token in the axios header, global setup
+    //issue is the token is used in all axios requests so if an api from another source is used it will still send the token to the unrelated source
+    // axios.defaults.headers['Authorization'] = `Bearer ${state.token}`
+
     const displayAlert = () => {
         console.log(1717)
         // note no payload is used here as a value is not provided to the reducer
@@ -105,15 +117,19 @@ const AppProvider = ({ children }) => {
     }
 
     const updateUser = async (currentUser) => {
-        console.log(108, currentUser)
-        // change user object to currentUser
-        const { email, name, lastName, location } = currentUser
-        if (!email || !name || !lastName || !location) {
-            dispatch({ type: DISPLAY_ALERT })
-            clearAlert()
-            return
+        // const { email, name, lastName, location } = currentUser
+        // if (!email || !name || !lastName || !location) {
+        //     dispatch({ type: DISPLAY_ALERT })
+        //     clearAlert()
+        //     return
+        // }
+
+        try {
+            const { data } = await authFetch.patch('/auth/updateUser', currentUser)
+            console.log(130, data)
+        } catch (error) {
+            console.log(133, error)
         }
-        console.log(117)
         // const fullNewUser = { ...JSON.parse(user), email, name, lastName, location }
         // localStorage.setItem('user', JSON.stringify(fullNewUser))
         // dispatch({ type: UPDATE_USER, payload: fullNewUser })
