@@ -1,5 +1,5 @@
 import React, { useReducer, useContext } from 'react';
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER } from './actions';
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR } from './actions';
 import Reducer from './reducer'
 import axios from 'axios'
 
@@ -28,27 +28,49 @@ const AppContext = React.createContext()
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
 
-    // axios custom instance
+    // axios custom instance note headers removed Authorization
     const authFetch = axios.create({
         baseURL: '/api/v1/',
-        headers: {
-            Authorization: `Bearer ${state.token}`
-        }
+        // headers: {
+        //     Authorization: `Bearer ${state.token}`
+        // }
     })
+
+    // added bearer token to request header with interceptor
+    authFetch.interceptors.request.use((config) => {
+        config.headers['Authorization'] = `Bearer ${state.token}`
+        return config
+    },
+        (error) => {
+            return Promise.reject(error)
+        }
+    )
+
+    // change to response before sent to deal with 400 vs 401 error differently
+    authFetch.interceptors.response.use((response) => {
+        return response
+    },
+        (error) => {
+            if (error.response.status === 401) {
+                console.log(57, 'AUTH ERROR')
+            }
+            return Promise.reject(error)
+        }
+    )
 
     // set the token in the axios header, global setup
     //issue is the token is used in all axios requests so if an api from another source is used it will still send the token to the unrelated source
     // axios.defaults.headers['Authorization'] = `Bearer ${state.token}`
+
+    const clearAlert = () => {
+        setTimeout(() => { dispatch({ type: CLEAR_ALERT }) }, 3000)
+    }
 
     const displayAlert = () => {
         console.log(1717)
         // note no payload is used here as a value is not provided to the reducer
         dispatch({ type: DISPLAY_ALERT })
         clearAlert()
-    }
-
-    const clearAlert = () => {
-        setTimeout(() => { dispatch({ type: CLEAR_ALERT }) }, 3000)
     }
 
     const addUserToLocalStorage = ({ user, token, location }) => {
@@ -117,19 +139,33 @@ const AppProvider = ({ children }) => {
     }
 
     const updateUser = async (currentUser) => {
+        dispatch({ type: UPDATE_USER_BEGIN })
+
+        try {
+            const { data } = await authFetch.patch('/auth/updateUser', currentUser)
+            console.log(130, data)
+            const { user, location, token } = data
+            dispatch({
+                type: UPDATE_USER_SUCCESS,
+                payload: { user, location, token }
+            })
+            addUserToLocalStorage({ user, token, location })
+        } catch (error) {
+            console.log(133, error)
+            dispatch({
+                type: UPDATE_USER_ERROR,
+                payload: { msg: error.response.data.msg }
+            })
+        }
+        clearAlert()
+
+        // example with local storage only
         // const { email, name, lastName, location } = currentUser
         // if (!email || !name || !lastName || !location) {
         //     dispatch({ type: DISPLAY_ALERT })
         //     clearAlert()
         //     return
         // }
-
-        try {
-            const { data } = await authFetch.patch('/auth/updateUser', currentUser)
-            console.log(130, data)
-        } catch (error) {
-            console.log(133, error)
-        }
         // const fullNewUser = { ...JSON.parse(user), email, name, lastName, location }
         // localStorage.setItem('user', JSON.stringify(fullNewUser))
         // dispatch({ type: UPDATE_USER, payload: fullNewUser })
