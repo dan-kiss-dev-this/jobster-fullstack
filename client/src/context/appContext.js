@@ -52,7 +52,8 @@ const AppProvider = ({ children }) => {
     },
         (error) => {
             if (error.response.status === 401) {
-                console.log(57, 'AUTH ERROR')
+                // if auth expired logout user
+                logoutUser()
             }
             return Promise.reject(error)
         }
@@ -67,7 +68,6 @@ const AppProvider = ({ children }) => {
     }
 
     const displayAlert = () => {
-        console.log(1717)
         // note no payload is used here as a value is not provided to the reducer
         dispatch({ type: DISPLAY_ALERT })
         clearAlert()
@@ -89,7 +89,6 @@ const AppProvider = ({ children }) => {
     // note current user is the object we pass to this function
     const registerUser = async (currentUser) => {
         dispatch({ type: REGISTER_USER_BEGIN });
-        console.log(3838, currentUser)
 
         try {
             // see how routing is set on server side to get this url
@@ -102,7 +101,7 @@ const AppProvider = ({ children }) => {
             // local storage later
             addUserToLocalStorage({ user, token, location })
         } catch (error) {
-            console.log(45, error, error.response)
+            console.log(45, error)
             dispatch({ type: REGISTER_USER_ERROR, payload: { msg: error.response.data.msg } })
         }
         clearAlert()
@@ -124,7 +123,7 @@ const AppProvider = ({ children }) => {
             // local storage later
             addUserToLocalStorage({ user, token, location })
         } catch (error) {
-            console.log(45, error, error.response)
+            console.log(45, error)
             // error.response.data.msg
             dispatch({ type: LOGIN_USER_ERROR, payload: { msg: 'Invalid Login, ' + error.message } })
         }
@@ -152,10 +151,12 @@ const AppProvider = ({ children }) => {
             addUserToLocalStorage({ user, token, location })
         } catch (error) {
             console.log(133, error)
-            dispatch({
-                type: UPDATE_USER_ERROR,
-                payload: { msg: error.response.data.msg }
-            })
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: UPDATE_USER_ERROR,
+                    payload: { msg: error.response.data.msg }
+                })
+            }
         }
         clearAlert()
 
@@ -171,7 +172,7 @@ const AppProvider = ({ children }) => {
         // dispatch({ type: UPDATE_USER, payload: fullNewUser })
     }
 
-    //props.children has been desctructured as we got the stateful container being returned below
+    //props.children has been destructured as we got the stateful container being returned below
     return (
         <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser }}>{children}</AppContext.Provider>
     )
