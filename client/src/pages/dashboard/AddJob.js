@@ -13,7 +13,8 @@ const AddJob = () => {
         jobType,
         jobTypeOptions,
         status,
-        statusOptions
+        statusOptions,
+        handleChange
     } = useAppContext();
 
     const handleSubmit = (e) => {
@@ -27,7 +28,7 @@ const AddJob = () => {
     const handleJobInput = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        console.log(19, name, value)
+        handleChange({ name, value })
     }
     return (
         <Wrapper>
