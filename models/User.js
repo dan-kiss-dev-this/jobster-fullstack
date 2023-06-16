@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema({
         // required: [true, "please provide name"],
         minlength: 3,
         maxlength: 20,
-        default: "my city"
+        default: "Portland, OR"
 
     }
 });
