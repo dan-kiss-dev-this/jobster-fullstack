@@ -14,14 +14,26 @@ const userLocation = localStorage.getItem('location')
 const initialState = {
     isLoading: false,
     showAlert: false,
-    alertText: "",
+    alertText: '',
     alertTypes: '',
     // json parse will make the js object from a json string
     user: user ? JSON.parse(user) : null,
     token: token ? token : null,
     userLocation: userLocation ? userLocation : '',
     jobLocation: userLocation ? userLocation : '',
-    showSidebar: false
+    showSidebar: false,
+
+    // job state, see the Job.js model in the server for fields to use
+    // we set job values in global state so we can edit setup jobs or create new jobs from the same component
+    isEditing: false,
+    editJobId: '',
+    position: '',
+    company: '',
+    // jobLocation was made when we created the user see above
+    jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
+    jobType: 'full-time',
+    statusOptions: ['pending, interview, declined'],
+    status: 'pending'
 }
 
 const AppContext = React.createContext()
