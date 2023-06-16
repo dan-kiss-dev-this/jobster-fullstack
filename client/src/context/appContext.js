@@ -32,7 +32,7 @@ const initialState = {
     // jobLocation was made when we created the user see above
     jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
     jobType: 'full-time',
-    statusOptions: ['pending, interview, declined'],
+    statusOptions: ['pending', 'interview', 'declined'],
     status: 'pending'
 }
 
