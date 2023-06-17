@@ -10,14 +10,16 @@ const createJob = async (req, res) => {
     if (!position || !company) {
         throw new BadRequestError('Please Provide All Values')
     }
-    // the auth middleware is adding the user id to the request object automatically
+    // the auth.js middleware is adding the user id to the request object automatically
     req.body.createdBy = req.user.userId
     const job = await Job.create(req.body)
     res.status(StatusCodes.CREATED).json({ job })
 }
 
 const getAllJobs = async (req, res) => {
-    res.send('get all jobs')
+    // auth middleware gives userId to req object, always auth.js runs before allowing job read access
+    const jobs = await Job.find({ createdBy: req.user.userId })
+    res.status(StatusCodes.OK).json({ jobs, totalJobs: jobs.length, numOfPages: 1 })
 }
 
 const updateJob = async (req, res) => {
