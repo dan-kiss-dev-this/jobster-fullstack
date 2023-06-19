@@ -234,9 +234,17 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
+    const setEditJob = (id) => {
+        console.log('set edit job', id)
+    }
+
+    const deleteJob = id => {
+        console.log('delete job', id)
+    }
+
     //props.children has been destructured as we got the stateful container being returned below
     return (
-        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createJob, getJobs }}>{children}</AppContext.Provider>
+        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createJob, getJobs, setEditJob, deleteJob }}>{children}</AppContext.Provider>
     )
 }
 

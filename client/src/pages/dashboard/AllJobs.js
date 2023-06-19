@@ -1,9 +1,12 @@
 import React from 'react'
+import { SearchContainer, JobsContainer } from '../../components'
 
 const AllJobs = () => {
-    // you have a controller to get all jobs by user id
     return (
-        <h1>All Jobs Page</h1>
+        <>
+            <SearchContainer />
+            <JobsContainer />
+        </>
     )
 }
 
