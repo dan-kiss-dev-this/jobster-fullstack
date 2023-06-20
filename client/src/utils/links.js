@@ -4,12 +4,12 @@ import { FaWpforms } from 'react-icons/fa'
 import { ImProfile } from 'react-icons/im'
 
 const links = [
-    {
-        id: 1,
-        text: 'stats',
-        path: "/",
-        icon: <IoBarChartSharp />
-    },
+    // {
+    //     id: 1,
+    //     text: 'stats',
+    //     path: "/",
+    //     icon: <IoBarChartSharp />
+    // },
     {
         id: 2,
         text: 'all jobs',
