@@ -23,7 +23,24 @@ const getAllJobs = async (req, res) => {
 }
 
 const updateJob = async (req, res) => {
-    res.send('update job')
+    console.log(27, req.params)
+    const { id: jobId } = req.params
+
+    const { company, position } = req.body
+
+    if (!company || !position) {
+        throw new BadRequestError('Please Provide all values')
+    }
+
+    const job = await Job.findOne({ _id: jobId })
+    if (!job) {
+        throw new NotFoundError(`No job with id ${jobId}`)
+    }
+    // note if needed to run a hook would use Job.save()
+    const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, req.body, {
+        new: true, runValidators: true
+    })
+    res.status(StatusCodes.OK).json({ updatedJob })
 }
 
 const deleteJob = async (req, res) => {
