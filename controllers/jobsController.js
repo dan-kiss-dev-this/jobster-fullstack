@@ -1,6 +1,7 @@
 import Job from '../models/Job.js'
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError } from '../errors/index.js'
+import checkPermissions from '../utils/checkPermissions.js'
 
 // async due to communication with the database. 
 const createJob = async (req, res) => {
@@ -23,7 +24,7 @@ const getAllJobs = async (req, res) => {
 }
 
 const updateJob = async (req, res) => {
-    console.log(27, req.params)
+    console.log(27, req.params, req)
     const { id: jobId } = req.params
 
     const { company, position } = req.body
@@ -36,6 +37,10 @@ const updateJob = async (req, res) => {
     if (!job) {
         throw new NotFoundError(`No job with id ${jobId}`)
     }
+
+    checkPermissions(req.user, job.createdBy)
+    // who can change the job? the person who created it or an admin user, no permissions === unauthorized
+
     // note if needed to run a hook would use Job.save()
     const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, req.body, {
         new: true, runValidators: true
@@ -44,7 +49,21 @@ const updateJob = async (req, res) => {
 }
 
 const deleteJob = async (req, res) => {
-    res.send('delete jobs')
+    const { id: jobId } = req.params
+
+    const job = await Job.findOne({ _id: jobId })
+
+    if (!job) {
+        throw new NotFoundError(`No job with id ${jobId}`)
+    }
+
+    checkPermissions(req.user, job.createdBy)
+
+    await job.remove()
+    res.status(StatusCodes.OK).json({
+        msg:
+            'Success! Job removed'
+    })
 }
 
 const showStats = async (req, res) => {
