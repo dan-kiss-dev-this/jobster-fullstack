@@ -50,9 +50,8 @@ const updateJob = async (req, res) => {
 
 const deleteJob = async (req, res) => {
     const { id: jobId } = req.params
-
+    // note if jobId is not what is expected by mongoose get a 500 from mongoose
     const job = await Job.findOne({ _id: jobId })
-
     if (!job) {
         throw new NotFoundError(`No job with id ${jobId}`)
     }

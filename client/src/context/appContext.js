@@ -1,5 +1,5 @@
 import React, { useReducer, useContext } from 'react';
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_CHANGE, CLEAR_VALUES, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS, SET_EDIT_JOB } from './actions';
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_CHANGE, CLEAR_VALUES, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN } from './actions';
 import Reducer from './reducer'
 import axios from 'axios'
 
@@ -234,19 +234,34 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
-    const setEditJob = (id) => {
+    const setEditJob = async (id) => {
         console.log('set edit job', id)
         dispatch({ type: SET_EDIT_JOB, payload: { id } })
         // -get job based on id and set the add job properties based on the id
     }
 
-    const editJob = () => {
+    const editJob = async (id) => {
         console.log('edit job')
+        try {
+            // can do a dispatch to disable button when loading, send in job with new values, need whole job including id, send id to endpoint with job in the payload, something like update job success. have a consistent pattern
+            // let job = await authFetch.patch(`/jobs/${id}`, {})
+        } catch (error) {
+            // dispatch something sayng there was an error
+        }
     }
 
-    const deleteJob = id => {
+    const deleteJob = async (id) => {
         console.log('delete job', id)
+        dispatch({ type: DELETE_JOB_BEGIN })
+        try {
+            await authFetch.delete(`/jobs/${id}`)
+            // getJobs sets isLoading to false when done
+            getJobs()
+        } catch (error) {
+            logoutUser()
+        }
     }
+
 
     //props.children has been destructured as we got the stateful container being returned below
     return (
