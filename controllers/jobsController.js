@@ -41,7 +41,7 @@ const getAllJobs = async (req, res) => {
     let result = Job.find(queryObject)
 
     //chain sort conditions
-    if (soft === 'latest') {
+    if (sort === 'latest') {
         result = result.sort('-createdAt')
     }
     if (sort === 'oldest') {
