@@ -28,6 +28,11 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import path from 'path'
 
+//security packages
+import helmet from 'helmet'
+import xss from 'xss-clean'
+import mongoSanitize from 'express-mongo-sanitize'
+
 // es5 format below
 // const express = require('express')
 const app = express()
@@ -47,6 +52,11 @@ app.use(cors())
 
 //to access the json on post requests via express json middleware
 app.use(express.json())
+
+//security
+app.use(helmet())
+app.use(xss())
+app.use(mongoSanitize())
 
 const port = process.env.PORT || 5001
 
@@ -77,7 +87,6 @@ app.use('/api/v1/jobs', authenticateUser, jobsRouter)
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, './client/build', 'index.html'))
 })
-
 
 //app.use says use the routes that exist and if non are found it will use the app.use() middleware
 app.use(notFoundMiddleware)
