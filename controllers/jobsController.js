@@ -18,6 +18,7 @@ const createJob = async (req, res) => {
 }
 
 const getAllJobs = async (req, res) => {
+    console.log(2121, req.user)
     // /jobs?status=all or /jobs?status=interview&jobType=remote to grab query parameters
     const { status, jobType, sort, search } = req.query
 

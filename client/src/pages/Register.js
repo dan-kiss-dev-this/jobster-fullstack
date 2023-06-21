@@ -73,6 +73,8 @@ export default function Register() {
                         submit
                     </button>
 
+                    {/* setup test user  loginUser */}
+                    <button type="button" className="btn btn-block btn-hipster" disabled={isLoading} onClick={() => loginUser({ email: 'testUser@test.com', password: 'secret' })}>Demo App</button>
                     <p>
                         {values.isMember ? 'Not a member?' : 'Already a member?'}
                         <button className="member-btn" type="button" onClick={toggleMember}>{values.isMember ? 'Register' : 'Login'}</button>

@@ -2,6 +2,7 @@ import express from "express"
 import { register, login, updateUser } from "../controllers/authController.js";
 //auth
 import authenticateUser from '../middleware/auth.js'
+import testUser from '../middleware/testUser.js'
 
 export const authRouter = express.Router();
 
@@ -16,6 +17,6 @@ const apiLimiter = rateLimiter({
 authRouter.route('/register').post(apiLimiter, register)
 authRouter.route('/login').post(apiLimiter, login)
 // the user is authenticated before being updated
-authRouter.route('/updateUser').patch(authenticateUser, updateUser)
+authRouter.route('/updateUser').patch(authenticateUser, testUser, updateUser)
 
 export default authRouter
