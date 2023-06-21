@@ -18,8 +18,23 @@ const createJob = async (req, res) => {
 }
 
 const getAllJobs = async (req, res) => {
+    // /jobs?status=all to grab query parameters
+    const { status, jobType, sort, search } = req.query
+
+    const queryObject = {
+        createdBy: req.user.userId
+    }
+    // add params based on condition
+    if (status && (status !== 'all')) {
+        queryObject.status = status
+    }
+
     // auth middleware gives userId to req object, always auth.js runs before allowing job read access
-    const jobs = await Job.find({ createdBy: req.user.userId })
+    // no await before result aka Job to chain sort conditions
+    let result = Job.find(queryObject)
+
+    const jobs = await result
+
     res.status(StatusCodes.OK).json({ jobs, totalJobs: jobs.length, numOfPages: 1 })
 }
 
