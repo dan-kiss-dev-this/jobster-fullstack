@@ -23,6 +23,11 @@ import authenticateUser from './middleware/auth.js'
 
 import morgan from 'morgan'
 
+//es6 modules used so have this setup for dirname
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import path from 'path'
+
 // es5 format below
 // const express = require('express')
 const app = express()
@@ -30,6 +35,12 @@ const app = express()
 if (process.env.NODE_ENV !== 'production') {
     app.use(morgan('dev'))
 }
+
+// get absolute path dirname
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+//use to deploy static assets
+app.use(express.static(path.resolve(__dirname, './client/build')))
 
 // so backend server can talk to front end without cors issue
 app.use(cors())
@@ -58,6 +69,15 @@ app.listen(port, () => { console.log(`Server is listening on port ${port}`) })
 // note we also authenticate the user if they are changing information in their profile, to login we don't authenticate as the user is checked for existence or a new account is made before authentication can occur
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/jobs', authenticateUser, jobsRouter)
+
+// for front end want to direct url to index.html in the front end build folder as it has the router
+//put after server routes above so many git not going to the api routes above comes here
+//as we are adding the build create react app to server.js 
+//we are only going to run node server on heroku and that will allow us to run the server.
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, './client/build', 'index.html'))
+})
+
 
 //app.use says use the routes that exist and if non are found it will use the app.use() middleware
 app.use(notFoundMiddleware)
