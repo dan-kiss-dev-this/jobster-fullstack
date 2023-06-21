@@ -18,7 +18,7 @@ const createJob = async (req, res) => {
 }
 
 const getAllJobs = async (req, res) => {
-    // /jobs?status=all to grab query parameters
+    // /jobs?status=all or /jobs?status=interview&jobType=remote to grab query parameters
     const { status, jobType, sort, search } = req.query
 
     const queryObject = {
@@ -28,10 +28,31 @@ const getAllJobs = async (req, res) => {
     if (status && (status !== 'all')) {
         queryObject.status = status
     }
+    if (jobType && (jobType !== 'all')) {
+        queryObject.jobType = jobType
+    }
+    if (search) {
+        // regex search in mongodb and i is case insensitive, partial job position match
+        queryObject.position = { $regex: search, $options: 'i' }
+    }
 
     // auth middleware gives userId to req object, always auth.js runs before allowing job read access
     // no await before result aka Job to chain sort conditions
     let result = Job.find(queryObject)
+
+    //chain sort conditions
+    if (soft === 'latest') {
+        result = result.sort('-createdAt')
+    }
+    if (sort === 'oldest') {
+        result = result.sort('createdAt')
+    }
+    if (sort === 'a-z') {
+        result = result.sort('position')
+    }
+    if (sort === 'z-a') {
+        result = result.sort('-position')
+    }
 
     const jobs = await result
 
