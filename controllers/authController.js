@@ -103,7 +103,7 @@ const logout = async (req, res) => {
         httpOnly: true,
         expires: new Date(Date.now())
     })
-    res.status(StatusCode.OK).json({ msg: 'User logged out!' })
+    res.status(StatusCodes.OK).json({ msg: 'User logged out!' })
 }
 
 export { register, login, updateUser, getCurrentUser, logout }
