@@ -33,6 +33,9 @@ import helmet from 'helmet'
 import xss from 'xss-clean'
 import mongoSanitize from 'express-mongo-sanitize'
 
+//cookie setup
+import cookieParser from 'cookie-parser'
+
 // es5 format below
 // const express = require('express')
 const app = express()
@@ -57,6 +60,9 @@ app.use(express.json())
 app.use(helmet())
 app.use(xss())
 app.use(mongoSanitize())
+
+//cookie
+app.use(cookieParser())
 
 const port = process.env.PORT || 5001
 

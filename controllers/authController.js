@@ -1,6 +1,7 @@
 import User from "../models/User.js"
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, UnAuthenticatedError } from '../errors/index.js'
+import attachCookies from "../utils/attachCookies.js"
 
 const register = async (req, res, next) => {
     // user object shows up here and is loaded to mongodb, res is given
@@ -8,6 +9,9 @@ const register = async (req, res, next) => {
         const user = await User.create(req.body)
         // custom mongoose jwt instance method
         const token = user.createJWT()
+        //token cookie included every time a request is made to the server
+        attachCookies({ res, token })
+
         res.status(StatusCodes.CREATED).json({
             user: {
                 email: user.email,
@@ -15,7 +19,9 @@ const register = async (req, res, next) => {
                 location: user.location,
                 name: user.name,
                 location: user.location
-            }, token
+            },
+            // note token is removed here as it is in the cookie
+            // token
         })
     } catch (error) {
         // we use next instead of this code to pass the error to the next middleware res.status(500).json({ msg: "there was an error" })
@@ -47,17 +53,14 @@ const login = async (req, res) => {
     const token = user.createJWT()
     // to not expose the password
     user.password = undefined
-
-    const oneDay = 1000 * 60 * 60 * 24
-    // cookie expires different then token so set up for the same time, 1 day
-    res.cookie('token', token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + oneDay),
-        secure: process.env.NODE_ENV === 'production'
-    })
+    //token cookie included every time a request is made to the server so token not in .json below
+    attachCookies({ res, token })
 
     // old version to store token locally not as cookie
-    res.status(StatusCodes.OK).json({ user, token, location: user.location })
+    res.status(StatusCodes.OK).json({
+        user,
+        location: user.location
+    })
 }
 
 const updateUser = async (req, res) => {
@@ -79,9 +82,11 @@ const updateUser = async (req, res) => {
 
     // make a new token
     const token = user.createJWT()
+    //token cookie included every time a request is made to the server so token not in .json below
+    attachCookies({ res, token })
+
     res.status(StatusCodes.OK).json({
         user,
-        token,
         location: user.location
     })
     // triggered by the hook from mongoose middleware in UserSchema setup
