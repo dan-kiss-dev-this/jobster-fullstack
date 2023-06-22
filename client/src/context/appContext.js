@@ -1,5 +1,5 @@
-import React, { useReducer, useContext } from 'react';
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_CHANGE, CLEAR_VALUES, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, DELETE_JOB_ERROR, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_ERROR, CLEAR_FILTERS } from './actions';
+import React, { useReducer, useContext, useEffect } from 'react';
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_CHANGE, CLEAR_VALUES, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, DELETE_JOB_ERROR, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_ERROR, CLEAR_FILTERS, GET_CURRENT_USER_BEGIN, GET_CURRENT_USER_SUCCESS } from './actions';
 import Reducer from './reducer'
 import axios from 'axios'
 
@@ -49,7 +49,10 @@ const initialState = {
     searchStatus: 'all',
     searchType: 'all',
     sort: 'latest',
-    sortOptions: ['latest', 'oldest', 'a-z', 'z-a']
+    sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
+
+    //cookie
+    userLoading: true,
 }
 
 const AppContext = React.createContext()
@@ -326,10 +329,30 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CLEAR_FILTERS })
     }
 
+    // run this on all page refreshes
+    const getCurrentUser = async () => {
+        dispatch({ type: GET_CURRENT_USER_BEGIN })
+        try {
+            const { data } = await authFetch('/auth/getCurrentUser')
+            const { user, location } = data
+
+            dispatch({
+                type: GET_CURRENT_USER_SUCCESS,
+                payload: { user, location }
+            })
+        } catch (error) {
+            if (error.response.status === 401) return
+            logoutUser()
+        }
+    }
+
+    useEffect(() => {
+        getCurrentUser()
+    }, [])
 
     //props.children has been destructured as we got the stateful container being returned below
     return (
-        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createJob, getJobs, setEditJob, editJob, deleteJob, clearFilters }}>{children}</AppContext.Provider>
+        <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleChange, clearValues, createJob, getJobs, setEditJob, editJob, deleteJob, clearFilters, getCurrentUser }}>{children}</AppContext.Provider>
     )
 }
 

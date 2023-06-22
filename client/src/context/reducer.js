@@ -1,4 +1,4 @@
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_CHANGE, CLEAR_VALUES, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, DELETE_JOB_ERROR, EDIT_JOB_SUCCESS, EDIT_JOB_BEGIN, EDIT_JOB_ERROR, CLEAR_FILTERS } from "./actions";
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR, LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_CHANGE, CLEAR_VALUES, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_JOBS_BEGIN, GET_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, DELETE_JOB_ERROR, EDIT_JOB_SUCCESS, EDIT_JOB_BEGIN, EDIT_JOB_ERROR, CLEAR_FILTERS, GET_CURRENT_USER_BEGIN, GET_CURRENT_USER_SUCCESS } from "./actions";
 import { initialState } from './appContext';
 
 const reducer = (state, action) => {
@@ -246,6 +246,29 @@ const reducer = (state, action) => {
             searchStatus: 'all',
             searchType: 'all',
             sort: 'latest'
+        }
+    }
+    if (action.type === GET_CURRENT_USER_BEGIN) {
+        return {
+            ...state,
+            userLoading: true,
+            showAlert: false
+        }
+    }
+    if (action.type === GET_CURRENT_USER_SUCCESS) {
+        return {
+            ...state,
+            userLoading: false,
+            user: action.payload.user,
+            userLocation: action.payload.location,
+            jobLocation: action.payload.location
+        }
+    }
+    if (action.type === LOGOUT_USER) {
+        return {
+            ...initialState,
+            userLoading: false,
+            user: null
         }
     }
 
