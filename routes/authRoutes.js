@@ -1,5 +1,5 @@
 import express from "express"
-import { register, login, updateUser, getCurrentUser } from "../controllers/authController.js";
+import { register, login, updateUser, getCurrentUser, logout } from "../controllers/authController.js";
 //auth
 import authenticateUser from '../middleware/auth.js'
 import testUser from '../middleware/testUser.js'
@@ -19,5 +19,6 @@ authRouter.route('/login').post(apiLimiter, login)
 // the user is authenticated before being updated
 authRouter.route('/updateUser').patch(authenticateUser, testUser, updateUser)
 authRouter.route('/getCurrentUser').get(authenticateUser, getCurrentUser)
+authRouter.route('/logout').get(logout)
 
 export default authRouter
