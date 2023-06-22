@@ -52,7 +52,7 @@ const initialState = {
     sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
 
     //cookie
-    userLoading: true,
+    userLoading: false,
 }
 
 const AppContext = React.createContext()
@@ -178,7 +178,8 @@ const AppProvider = ({ children }) => {
 
     const toggleSidebar = () => dispatch({ type: TOGGLE_SIDEBAR })
 
-    const logoutUser = () => {
+    const logoutUser = async () => {
+        await authFetch.get('/auth/logout')
         dispatch({ type: LOGOUT_USER });
         // removeUserFromLocalStorage()
     }
