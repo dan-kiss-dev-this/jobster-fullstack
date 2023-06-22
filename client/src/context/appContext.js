@@ -123,7 +123,8 @@ const AppProvider = ({ children }) => {
 
         try {
             // see how routing is set on server side to get this url
-            const response = await axios.post('http://localhost:4000/api/v1/auth/register', currentUser)
+            const response = await authFetch.post('/auth/register', currentUser)
+
             console.log(4040, response)
             const {
                 user,
@@ -152,7 +153,7 @@ const AppProvider = ({ children }) => {
 
         try {
             // see how routing is set on server side to get this url
-            const response = await axios.post('http://localhost:4000/api/v1/auth/login', currentUser)
+            const response = await authFetch.post('/auth/login', currentUser)
             console.log(4040, response)
             // const { data } = response;
             const { user,
