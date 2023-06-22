@@ -44,7 +44,7 @@ if (process.env.NODE_ENV !== 'production') {
 // get absolute path dirname
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-//use to deploy static assets
+//use to deploy static assets and run whole app off process.env.PORT with $ npm run server
 app.use(express.static(path.resolve(__dirname, './client/build')))
 
 // so backend server can talk to front end without cors issue
