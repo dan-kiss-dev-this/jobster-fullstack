@@ -47,10 +47,17 @@ const login = async (req, res) => {
     const token = user.createJWT()
     // to not expose the password
     user.password = undefined
-    res.status(StatusCodes.OK).json({ user, token, location: user.location })
-    //old confirmation
-    // res.send("login user")
 
+    const oneDay = 1000 * 60 * 60 * 24
+    // cookie expires different then token so set up for the same time, 1 day
+    res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + oneDay),
+        secure: process.env.NODE_ENV === 'production'
+    })
+
+    // old version to store token locally not as cookie
+    res.status(StatusCodes.OK).json({ user, token, location: user.location })
 }
 
 const updateUser = async (req, res) => {
