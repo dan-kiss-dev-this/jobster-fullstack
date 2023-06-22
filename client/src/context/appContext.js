@@ -5,9 +5,10 @@ import axios from 'axios'
 
 // const api = axios.create({ baseURL: "http://localhost:000"})
 
-const token = localStorage.getItem('token')
-const user = localStorage.getItem('user')
-const userLocation = localStorage.getItem('location')
+// we get these values from the server after the app starts up so not local storage of token, keep these values in global state instead
+// const token = localStorage.getItem('token')
+// const user = localStorage.getItem('user')
+// const userLocation = localStorage.getItem('location')
 
 // import reducer from './reducer';
 
@@ -17,10 +18,11 @@ const initialState = {
     alertText: '',
     alertTypes: '',
     // json parse will make the js object from a json string
-    user: user ? JSON.parse(user) : null,
-    token: token ? token : null,
-    userLocation: userLocation ? userLocation : '',
-    jobLocation: userLocation ? userLocation : '',
+    user: null,
+    //remove the token from local storage
+    // token: token ? token : null,
+    userLocation: '',
+    jobLocation: '',
     showSidebar: false,
 
     // job state, see the Job.js model in the server for fields to use
@@ -62,15 +64,15 @@ const AppProvider = ({ children }) => {
         // }
     })
 
-    // added bearer token to request header with interceptor
-    authFetch.interceptors.request.use((config) => {
-        config.headers['Authorization'] = `Bearer ${state.token}`
-        return config
-    },
-        (error) => {
-            return Promise.reject(error)
-        }
-    )
+    // not using anymore due to cookie having token added bearer token to request header with interceptor
+    // authFetch.interceptors.request.use((config) => {
+    //     config.headers['Authorization'] = `Bearer ${state.token}`
+    //     return config
+    // },
+    //     (error) => {
+    //         return Promise.reject(error)
+    //     }
+    // )
 
     // change to response before sent to deal with 400 vs 401 error differently
     authFetch.interceptors.response.use((response) => {
@@ -99,18 +101,18 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
-    const addUserToLocalStorage = ({ user, token, location }) => {
-        // using stringify here as we can only store strings and we are getting back an object here, JSON.stringify will make a string from a js object which is needed as an object cannot be stored
-        localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('token', token)
-        localStorage.setItem('location', location)
-    }
-
-    const removeUserFromLocalStorage = () => {
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-        localStorage.removeItem('location')
-    }
+    // token not used here as we are using cookies instead
+    // const addUserToLocalStorage = ({ user, token, location }) => {
+    // using stringify here as we can only store strings and we are getting back an object here, JSON.stringify will make a string from a js object which is needed as an object cannot be stored
+    //     localStorage.setItem('user', JSON.stringify(user))
+    //     localStorage.setItem('token', token)
+    //     localStorage.setItem('location', location)
+    // }
+    // const removeUserFromLocalStorage = () => {
+    //     localStorage.removeItem('user')
+    //     localStorage.removeItem('token')
+    //     localStorage.removeItem('location')
+    // }
 
     // note current user is the object we pass to this function
     const registerUser = async (currentUser) => {
@@ -120,12 +122,20 @@ const AppProvider = ({ children }) => {
             // see how routing is set on server side to get this url
             const response = await axios.post('http://localhost:4000/api/v1/auth/register', currentUser)
             console.log(4040, response)
-            const { user, token } = response.data
+            const {
+                user,
+                // token 
+            } = response.data
             const { location } = user
 
-            dispatch({ type: REGISTER_USER_SUCCESS, payload: { user, token } })
-            // local storage later
-            addUserToLocalStorage({ user, token, location })
+            dispatch({
+                type: REGISTER_USER_SUCCESS, payload: {
+                    user,
+                    // token 
+                }
+            })
+            // remove local storage 
+            // addUserToLocalStorage({ user, token, location })
         } catch (error) {
             console.log(45, error)
             dispatch({ type: REGISTER_USER_ERROR, payload: { msg: error.response.data.msg } })
@@ -142,12 +152,19 @@ const AppProvider = ({ children }) => {
             const response = await axios.post('http://localhost:4000/api/v1/auth/login', currentUser)
             console.log(4040, response)
             // const { data } = response;
-            const { user, token } = response.data
+            const { user,
+                // token 
+            } = response.data
             const { location } = user
 
-            dispatch({ type: LOGIN_USER_SUCCESS, payload: { user, token } })
-            // local storage later
-            addUserToLocalStorage({ user, token, location })
+            dispatch({
+                type: LOGIN_USER_SUCCESS, payload: {
+                    user,
+                    // token 
+                }
+            })
+            // local storage remove
+            // addUserToLocalStorage({ user, token, location })
         } catch (error) {
             console.log(45, error)
             // error.response.data.msg
@@ -160,7 +177,7 @@ const AppProvider = ({ children }) => {
 
     const logoutUser = () => {
         dispatch({ type: LOGOUT_USER });
-        removeUserFromLocalStorage()
+        // removeUserFromLocalStorage()
     }
 
     const updateUser = async (currentUser) => {
@@ -169,12 +186,19 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await authFetch.patch('/auth/updateUser', currentUser)
             console.log(130, data)
-            const { user, location, token } = data
+            const { user,
+                location,
+                // token 
+            } = data
             dispatch({
                 type: UPDATE_USER_SUCCESS,
-                payload: { user, location, token }
+                payload: {
+                    user,
+                    location,
+                    // token 
+                }
             })
-            addUserToLocalStorage({ user, token, location })
+            // addUserToLocalStorage({ user, token, location })
         } catch (error) {
             console.log(133, error)
             if (error.response.status !== 401) {
@@ -210,7 +234,14 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CREATE_JOB_BEGIN })
         try {
             const { position, company, jobLocation, jobType, status } = state
-            await authFetch.post('/jobs', { position, company, jobLocation, jobType, status, token })
+            await authFetch.post('/jobs', {
+                position,
+                company,
+                jobLocation,
+                jobType,
+                status,
+                //  token 
+            })
             dispatch({ type: CREATE_JOB_SUCCESS })
             // could also sub clearValues() below
             dispatch({ type: CLEAR_VALUES })
