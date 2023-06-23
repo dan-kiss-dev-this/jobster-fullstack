@@ -17,7 +17,7 @@ const SmallSidebar = () => {
                     <header>
                         <Logo />
                     </header>
-                    <NavLinks toggleSidebar />
+                    <NavLinks hideOnClick/>
                 </div>
             </div>
         </Wrapper>

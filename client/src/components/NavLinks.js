@@ -1,8 +1,10 @@
 import React from 'react'
 import links from '../utils/links'
 import { NavLink } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
 
-const NavLinks = ({ toggleSidebar }) => {
+const NavLinks = ({ hideOnClick }) => {
+    const { toggleSidebar } = useAppContext()
     return (
         <div className="nav-links">
             {links.map((link) => {
@@ -11,7 +13,7 @@ const NavLinks = ({ toggleSidebar }) => {
                     // isActive prop provided by NavLink
                     className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
                     key={id}
-                    onClick={toggleSidebar}
+                    onClick={hideOnClick && toggleSidebar}
                     end
                 >
                     <span className="icon">{icon}</span>
