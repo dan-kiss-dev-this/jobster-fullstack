@@ -36,5 +36,8 @@ const Wrapper = styled.main`
       display: block;
     }
   }
+  .logo {
+    width: 164px;
+  }
 `
 export default Wrapper

@@ -4,6 +4,7 @@ const Wrapper = styled.section`
   display: grid;
   align-items: center;
   .logo {
+    width: 164px;
     display: block;
     margin: 0 auto;
     margin-bottom: 1.38rem;
